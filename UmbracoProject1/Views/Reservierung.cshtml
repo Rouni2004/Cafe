@@ -1,0 +1,56 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reservierung</title>
+  <style>
+    body{font-family:'Lora',serif;margin:0;background:#3b444d;color:#fff}
+    header{position:sticky;top:0;background:#232e3c;padding:10px 20px;display:flex;justify-content:space-between}
+    nav a{color:#c49a6c;margin-left:15px;text-decoration:none;font-weight:700;text-transform:uppercase}
+    nav a:hover{color:#fff}
+    .hero{background:url('https://edo-sushi.de/wp-content/uploads/2022/03/sushi_restaurant_saarlouis_edo_3.jpg') center/cover no-repeat;height:320px;display:flex;align-items:center;justify-content:center}
+    .reservation-section{padding:40px 20px;max-width:800px;margin:0 auto;border:1px solid #c49a6c;border-radius:8px}
+    form{display:grid;gap:20px}
+    input,select,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px}
+    button{background:#c49a6c;border:none;color:#fff;padding:12px;font-weight:700;border-radius:4px}
+  </style>
+</head>
+<body>
+<header>
+  <a href="@Model.Root().Url()">Campus Café</a>
+  <nav>
+    <a href="@Model.Root().Url()">Home</a>
+    <a href="@Model.Url()">Reservierung</a>
+  </nav>
+</header>
+
+<section class="hero"><h2>Reservierung</h2></section>
+
+<section class="reservation-section">
+  <h2>Online Reservierungsanfrage</h2>
+  <form method="post" action="#">
+    <label for="date">Datum</label>
+    <input type="date" id="date" name="date" required />
+    <label for="time">Uhrzeit</label>
+    <input type="time" id="time" name="time" required />
+    <label for="persons">Personen</label>
+    <select id="persons" name="persons" required>
+      @for (int i=1;i<=12;i++){<option value="@i">@i</option>}
+    </select>
+    <label for="name">Vor- und Zuname</label>
+    <input type="text" id="name" name="name" required />
+    <label for="email">E-Mail</label>
+    <input type="email" id="email" name="email" required />
+    <label for="phone">Telefonnummer</label>
+    <input type="tel" id="phone" name="phone" />
+    <label for="message">Nachricht</label>
+    <textarea id="message" name="message"></textarea>
+    <label><input type="checkbox" name="consent" required /> Ich stimme der Speicherung meiner Daten zu.</label>
+    <button type="submit">Anfrage absenden</button>
+  </form>
+</section>
+</body>
+</html>
