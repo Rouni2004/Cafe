@@ -1,6 +1,45 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Feedback>
-@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Extensions
+
 @{
-	Layout = null;
+    var ok = TempData["FeedbackSuccess"] as string;
+    var err = TempData["FeedbackError"] as string;
+
+    // Nur freigeschaltete Einträge anzeigen
+    var entries = Model.ChildrenOfType("feedback")
+                       .Where(x => x.Value<bool>("fbApproved"))
+                       .OrderByDescending(x => x.CreateDate);
+}
+
+<h1>@Model.Name</h1>
+
+@if (!string.IsNullOrEmpty(ok)) { <div style="color:#0a0">@Html.Raw(ok)</div> }
+@if (!string.IsNullOrEmpty(err)) { <div style="color:#b00">@Html.Raw(err)</div> }
+
+@using (Html.BeginUmbracoForm("SubmitFeedback", "FeedbackSurface", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="currentPageId" value="@Model.Id" />
+
+    <label>Name*</label>
+    <input name="name" required />
+
+    <label>E‑Mail (optional)</label>
+    <input name="email" type="email" />
+
+    <label>Nachricht*</label>
+    <textarea name="message" required></textarea>
+
+    <button type="submit">Absenden</button>
+}
+
+<h2>Letzte Feedbacks</h2>
+@if (!entries.Any()) { <p>Noch keine Einträge.</p> }
+@foreach (var x in entries)
+{
+    <div style="border:1px solid #eee;padding:8px;margin:8px 0">
+        <strong>@x.Value<string>("fbName")</strong>
+        <span style="color:#666">– @x.CreateDate.ToLocalTime():dd.MM.yyyy HH:mm</span>
+        <div>@x.Value<string>("fbMessage")</div>
+    </div>
 }

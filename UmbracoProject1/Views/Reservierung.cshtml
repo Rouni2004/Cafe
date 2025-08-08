@@ -1,24 +1,46 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-@{ Layout = null; }
+@{
+    Layout = null;
+
+    // Bild aus dem Media-Picker (Alias: herobild)
+    var hero = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("herobild");
+    var heroUrl = hero?.Url() ?? ""; // optional: Fallback /media/placeholder.jpg
+
+    // optional: Titel aus dem Seitennamen
+    var pageTitle = Model.Name ?? "Reservierung";
+}
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reservierung</title>
+  <title>@pageTitle</title>
   <style>
     body{font-family:'Lora',serif;margin:0;background:#3b444d;color:#fff}
-    header{position:sticky;top:0;background:#232e3c;padding:10px 20px;display:flex;justify-content:space-between}
+    header{position:sticky;top:0;background:#232e3c;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+    header a{color:#c49a6c;text-decoration:none;font-weight:700}
     nav a{color:#c49a6c;margin-left:15px;text-decoration:none;font-weight:700;text-transform:uppercase}
     nav a:hover{color:#fff}
-    .hero{background:url('https://edo-sushi.de/wp-content/uploads/2022/03/sushi_restaurant_saarlouis_edo_3.jpg') center/cover no-repeat;height:320px;display:flex;align-items:center;justify-content:center}
-    .reservation-section{padding:40px 20px;max-width:800px;margin:0 auto;border:1px solid #c49a6c;border-radius:8px}
+    .hero{
+      background-image:url('@heroUrl');
+      background-position:center;
+      background-size:cover;
+      height:320px;display:flex;align-items:center;justify-content:center;text-align:center;
+      position:relative
+    }
+    .hero::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
+    .hero h2{position:relative;z-index:1;font-size:42px;margin:0}
+    .reservation-section{padding:40px 20px;max-width:800px;margin:20px auto;border:1px solid #c49a6c;border-radius:8px;background:#3b444d}
+    .reservation-section h2{color:#c49a6c;text-align:center;margin-top:0}
     form{display:grid;gap:20px}
+    label{display:block;margin-bottom:6px}
     input,select,textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px}
-    button{background:#c49a6c;border:none;color:#fff;padding:12px;font-weight:700;border-radius:4px}
+    button{background:#c49a6c;border:none;color:#fff;padding:12px;font-weight:700;border-radius:4px;cursor:pointer}
+    button:hover{background:#a07c53}
   </style>
 </head>
 <body>
+
 <header>
   <a href="@Model.Root().Url()">Campus Café</a>
   <nav>
@@ -27,30 +49,60 @@
   </nav>
 </header>
 
-<section class="hero"><h2>Reservierung</h2></section>
+<section class="hero">
+  <h2>@pageTitle</h2>
+</section>
 
 <section class="reservation-section">
   <h2>Online Reservierungsanfrage</h2>
+
+  <!-- TODO: später mit SurfaceController verknüpfen -->
   <form method="post" action="#">
-    <label for="date">Datum</label>
-    <input type="date" id="date" name="date" required />
-    <label for="time">Uhrzeit</label>
-    <input type="time" id="time" name="time" required />
-    <label for="persons">Personen</label>
-    <select id="persons" name="persons" required>
-      @for (int i=1;i<=12;i++){<option value="@i">@i</option>}
-    </select>
-    <label for="name">Vor- und Zuname</label>
-    <input type="text" id="name" name="name" required />
-    <label for="email">E-Mail</label>
-    <input type="email" id="email" name="email" required />
-    <label for="phone">Telefonnummer</label>
-    <input type="tel" id="phone" name="phone" />
-    <label for="message">Nachricht</label>
-    <textarea id="message" name="message"></textarea>
-    <label><input type="checkbox" name="consent" required /> Ich stimme der Speicherung meiner Daten zu.</label>
+    <div>
+      <label for="date">Datum</label>
+      <input type="date" id="date" name="date" required />
+    </div>
+
+    <div>
+      <label for="time">Uhrzeit</label>
+      <input type="time" id="time" name="time" required />
+    </div>
+
+    <div>
+      <label for="persons">Personen</label>
+      <select id="persons" name="persons" required>
+        @for (int i = 1; i <= 12; i++) { <option value="@i">@i</option> }
+      </select>
+    </div>
+
+    <div>
+      <label for="name">Vor- und Zuname</label>
+      <input type="text" id="name" name="name" required />
+    </div>
+
+    <div>
+      <label for="email">E-Mail</label>
+      <input type="email" id="email" name="email" required />
+    </div>
+
+    <div>
+      <label for="phone">Telefonnummer</label>
+      <input type="tel" id="phone" name="phone" />
+    </div>
+
+    <div>
+      <label for="message">Nachricht</label>
+      <textarea id="message" name="message"></textarea>
+    </div>
+
+    <label style="display:flex;gap:.5rem;align-items:center">
+      <input type="checkbox" name="consent" required />
+      Ich stimme der Speicherung meiner Daten gemäß Datenschutz zu.
+    </label>
+
     <button type="submit">Anfrage absenden</button>
   </form>
 </section>
+
 </body>
 </html>
